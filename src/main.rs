@@ -14,7 +14,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let file = File::open(path)?;
     let fd = File::as_raw_fd(&file) as usize;
 
-    let fd_path = format!("chan:{}", "/tmp/redox-wayland-99");
+    let fd_path = format!("chan:{}", "/tmp/unix-domain-socket/test");
 
     println!("open sender");
     let sender_fd =
