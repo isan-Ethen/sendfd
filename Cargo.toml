@@ -1,0 +1,12 @@
+[package]
+name = "sendfd"
+version = "0.1.0"
+edition = "2024"
+authors = ["Ibuki.O <isan.ethen@gmail.com>"]
+
+[[bin]]
+name = "sendfd"
+path = "src/main.rs"
+
+[dependencies]
+redox_syscall = "0.5"
