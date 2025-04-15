@@ -8,13 +8,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let fd_path = format!("chan:{}", "/tmp/unix-domain-socket/test");
     println!("scheme path: {}", fd_path);
 
-    let path = "file:/home/user/test.txt";
-    println!("file open: {}", path);
-    let socket_fd = syscall::open(path, syscall::O_RDONLY).map_err(from_syscall_error)?;
-
     println!("open sender");
     let sender_fd =
         syscall::open(fd_path, syscall::O_CREAT | syscall::O_RDWR).map_err(from_syscall_error)?;
+
+    let path = "file:/home/user/test.txt";
+    println!("file open: {}", path);
+    let socket_fd = syscall::open(path, syscall::O_RDWR).map_err(from_syscall_error)?;
 
     println!("sendfd");
     let res = syscall::sendfd(sender_fd, socket_fd, 0, 0).map_err(from_syscall_error)?;
