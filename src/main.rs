@@ -5,15 +5,12 @@ fn from_syscall_error(error: syscall::Error) -> io::Error {
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let fd_path = format!("/scheme/chan/{}", "tmp/unix-domain-socket/test");
+    let fd_path = format!("chan:{}", "/tmp/unix-domain-socket/test");
     println!("scheme path: {}", fd_path);
 
     println!("file open");
-    let socket_fd = syscall::open(
-        "/scheme/file/home/user/test",
-        syscall::O_CREAT | syscall::O_RDWR,
-    )
-    .map_err(from_syscall_error)?;
+    let socket_fd = syscall::open("file:/home/user/test", syscall::O_CREAT | syscall::O_RDWR)
+        .map_err(from_syscall_error)?;
 
     println!("open sender");
     let sender_fd =
