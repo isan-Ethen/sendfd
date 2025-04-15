@@ -9,7 +9,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("scheme path: {}", fd_path);
 
     println!("file open");
-    let socket_fd = syscall::open("file:/home/user/test", syscall::O_CREAT | syscall::O_RDWR)
+    let socket_fd = syscall::open("/tmp/test.txt", syscall::O_CREAT | syscall::O_RDWR)
         .map_err(from_syscall_error)?;
 
     println!("open sender");
