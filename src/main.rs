@@ -8,7 +8,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let fd_path = format!("chan:{}", "/tmp/unix-domain-socket/test");
     println!("scheme path: {}", fd_path);
 
-    println!("file open");
+    let path = "/tmp/test.txt";
+    println!("file open: {}", path);
     let socket_fd = syscall::open("/tmp/test.txt", syscall::O_CREAT | syscall::O_RDWR)
         .map_err(from_syscall_error)?;
 
