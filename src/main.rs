@@ -72,7 +72,7 @@ fn main() -> Result<()> {
         sender_fd
             .try_into()
             .map_err(|_| io::Error::last_os_error())?,
-        socket_fd,
+        fd,
         0,
         0,
     )
