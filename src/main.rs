@@ -12,7 +12,7 @@ fn from_syscall_error(error: syscall::Error) -> io::Error {
 
 fn connect_gate(path: &str) -> Result<RawFd> {
     println!("make socket");
-    let gate = unsafe { socket(libc::AF_UNIX, libc::SOCK_STREAM, 0) };
+    let gate = unsafe { socket(libc::AF_UNIX, libc::SOCK_DGRAM, 0) };
     if gate < 0 {
         return Err(io::Error::last_os_error());
     }
