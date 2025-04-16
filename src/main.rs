@@ -61,10 +61,11 @@ fn main() -> Result<()> {
     println!("file open: {}", path);
     let fd = syscall::open(path, syscall::O_RDWR).map_err(from_syscall_error)?;
 
-    let fd_path = format!("chan:{}", "/tmp/unix-domain-socket/test");
-    println!("scheme path: {}", fd_path);
+    let fd_path = "/tmp/unix-domain-socket/test";
+    // let scheme_path = format!("chan:{}", fd_path);
+    // println!("scheme path: {}", scheme_path);
 
-    println!("open sender");
+    println!("connect gate");
     let sender_fd = connect_gate(&fd_path)?;
 
     println!("sendfd");
