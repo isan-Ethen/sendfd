@@ -40,12 +40,14 @@ fn connect_gate(path: &str) -> Result<RawFd> {
     }
 
     // connect socket
-    if connect(
-        gate,
-        &gate_addr as *const _ as *const libc::sockaddr,
-        mem::size_of::<libc::sockaddr_un>() as libc::socklen_t,
-    ) < 0
-    {
+    let connect_result = unsafe {
+        connect(
+            gate,
+            &gate_addr as *const _ as *const libc::sockaddr,
+            mem::size_of::<libc::sockaddr_un>() as libc::socklen_t,
+        )
+    };
+    if connect_result < 0 {
         let err = io::Error::last_os_error();
         unsafe { libc::close(gate) };
         return Err(err);
@@ -66,7 +68,15 @@ fn main() -> Result<()> {
     let socket_fd = syscall::open(path, syscall::O_RDWR).map_err(from_syscall_error)?;
 
     println!("sendfd");
-    let res = syscall::sendfd(sender_fd, socket_fd, 0, 0).map_err(from_syscall_error)?;
+    let res = syscall::sendfd(
+        sender_fd
+            .try_into()
+            .map_err(|_| io::Error::last_os_error())?,
+        socket_fd,
+        0,
+        0,
+    )
+    .map_err(from_syscall_error)?;
 
     println!("res: {}", res);
 
