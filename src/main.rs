@@ -57,15 +57,15 @@ fn connect_gate(path: &str) -> Result<RawFd> {
 }
 
 fn main() -> Result<()> {
+    let path = "file:/home/user/test.txt";
+    println!("file open: {}", path);
+    let fd = syscall::open(path, syscall::O_RDWR).map_err(from_syscall_error)?;
+
     let fd_path = format!("chan:{}", "/tmp/unix-domain-socket/test");
     println!("scheme path: {}", fd_path);
 
     println!("open sender");
     let sender_fd = connect_gate(&fd_path)?;
-
-    let path = "file:/home/user/test.txt";
-    println!("file open: {}", path);
-    let socket_fd = syscall::open(path, syscall::O_RDWR).map_err(from_syscall_error)?;
 
     println!("sendfd");
     let res = syscall::sendfd(
