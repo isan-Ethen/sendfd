@@ -2,6 +2,7 @@ use libc::{connect, socket};
 use std::ffi::CString;
 use std::io::{self};
 use std::mem;
+use std::os::unix::io::RawFd;
 
 type Result<T> = std::result::Result<T, io::Error>;
 
@@ -13,7 +14,7 @@ fn connect_gate(path: &str) -> Result<RawFd> {
     // make socket
     let gate = unsafe { socket(libc::AF_UNIX, libc::SOCK_DGRAM, 0) };
     if gate < 0 {
-        return Err(());
+        return Err(io::Error::last_os_error());
     }
 
     let c_path = CString::new(path)
