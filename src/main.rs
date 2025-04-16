@@ -69,22 +69,25 @@ fn main() -> Result<()> {
     let fd = syscall::open(path, syscall::O_RDWR).map_err(from_syscall_error)?;
 
     let fd_path = "/tmp/uds/test";
-    // let scheme_path = format!("chan:{}", fd_path);
-    // println!("scheme path: {}", scheme_path);
+    let scheme_path = format!("chan:{}", fd_path);
+    println!("scheme path: {}", scheme_path);
 
     println!("connect gate");
-    let sender_fd = connect_gate(&fd_path)?;
+    // let sender_fd = connect_gate(&fd_path)?;
+    let sender_fd = syscall::open(scheme_path, syscall::O_RDWR)?;
 
     println!("sendfd");
-    let res = syscall::sendfd(
-        sender_fd
-            .try_into()
-            .map_err(|_| io::Error::last_os_error())?,
-        fd,
-        0,
-        0,
-    )
-    .map_err(from_syscall_error)?;
+    // let res = syscall::sendfd(
+    //     sender_fd
+    //         .try_into()
+    //         .map_err(|_| io::Error::last_os_error())?,
+    //     fd,
+    //     0,
+    //     0,
+    // )
+    // .map_err(from_syscall_error)?;
+    let res =
+        syscall::sendfd(sender_fd, fd, 0, "recvfd".as_ptr() as u64).map_err(from_syscall_error)?;
 
     println!("res: {}", res);
 
