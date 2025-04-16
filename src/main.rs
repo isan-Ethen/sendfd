@@ -22,9 +22,11 @@ fn connect_gate(path: &str) -> Result<RawFd> {
 
     println!("initialize socket addr");
     let mut gate_addr: libc::sockaddr_un = unsafe { mem::zeroed() };
+    println!("set sun_family");
     gate_addr.sun_family = libc::AF_UNIX as libc::sa_family_t;
-
+    println!("get path bytes");
     let path_bytes = c_path.as_bytes_with_nul();
+    println!("path bytes len: {}", path_bytes.len());
 
     println!("check len of path");
     if path_bytes.len() > gate_addr.sun_path.len() {
