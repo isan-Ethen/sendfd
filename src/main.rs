@@ -61,7 +61,7 @@ fn main() -> Result<()> {
     println!("file open: {}", path);
     let fd = syscall::open(path, syscall::O_RDWR).map_err(from_syscall_error)?;
 
-    let fd_path = "/tmp/unix-domain-socket/test";
+    let fd_path = "/tmp/uds/test";
     // let scheme_path = format!("chan:{}", fd_path);
     // println!("scheme path: {}", scheme_path);
 
