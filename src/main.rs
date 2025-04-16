@@ -20,7 +20,7 @@ fn connect_gate(path: &str) -> Result<RawFd> {
     let c_path = CString::new(path)
         .map_err(|_| io::Error::new(io::ErrorKind::InvalidInput, "path contains null bytes"))?;
 
-    println!("initialize socket addr");
+    println!("initialize gate_addr");
     let mut gate_addr: libc::sockaddr_un = unsafe { mem::zeroed() };
     println!("set sun_family");
     let family_value = libc::AF_UNIX;
@@ -53,7 +53,7 @@ fn connect_gate(path: &str) -> Result<RawFd> {
             mem::size_of::<libc::sockaddr_un>() as libc::socklen_t,
         )
     };
-    println!("connect result");
+    println!("connect result: {}", connect_result);
     if connect_result < 0 {
         let err = io::Error::last_os_error();
         unsafe { libc::close(gate) };
