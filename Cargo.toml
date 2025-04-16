@@ -9,4 +9,5 @@ name = "sendfd"
 path = "src/main.rs"
 
 [dependencies]
+libredox = "0.1.3"
 redox_syscall = "0.5"
