@@ -76,7 +76,7 @@ fn main() -> Result<()> {
     let sender_fd = connect_gate(&fd_path)?;
 
     println!("sendfd");
-    let res = syscall::sendfd(sender_fd, fd, 0, 0).map_err(from_syscall_error)?;
+    let res = syscall::sendfd(sender_fd.try_into()?, fd, 0, 0).map_err(from_syscall_error)?;
 
     println!("res: {}", res);
 
