@@ -23,7 +23,11 @@ fn connect_gate(path: &str) -> Result<RawFd> {
     println!("initialize socket addr");
     let mut gate_addr: libc::sockaddr_un = unsafe { mem::zeroed() };
     println!("set sun_family");
-    gate_addr.sun_family = libc::AF_UNIX as libc::sa_family_t;
+    let family_value = libc::AF_UNIX;
+    println!("family_value: {}", family_value);
+    let sa_family = family_value as libc::sa_family_t;
+    println!("sa_family: {}", sa_family);
+    gate_addr.sun_family = sa_family;
     println!("get path bytes");
     let path_bytes = c_path.as_bytes_with_nul();
     println!("path bytes len: {}", path_bytes.len());
@@ -49,6 +53,7 @@ fn connect_gate(path: &str) -> Result<RawFd> {
             mem::size_of::<libc::sockaddr_un>() as libc::socklen_t,
         )
     };
+    println!("connect result");
     if connect_result < 0 {
         let err = io::Error::last_os_error();
         unsafe { libc::close(gate) };
