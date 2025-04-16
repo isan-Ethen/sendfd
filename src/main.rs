@@ -74,7 +74,7 @@ fn main() -> Result<()> {
 
     println!("connect gate");
     // let sender_fd = connect_gate(&fd_path)?;
-    let sender_fd = syscall::open(scheme_path, syscall::O_RDWR)?;
+    let sender_fd = syscall::open(scheme_path, syscall::O_RDWR).map_err(from_syscall_error)?;
 
     println!("sendfd");
     // let res = syscall::sendfd(
