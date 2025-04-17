@@ -69,11 +69,11 @@ fn main() -> Result<()> {
     let fd = syscall::open(path, syscall::O_RDWR).map_err(from_syscall_error)?;
 
     let fd_path = "/tmp/uds/test";
-    // let scheme_path = format!("chan:{}", fd_path);
-    // println!("scheme path: {}", scheme_path);
+    let scheme_path = format!("chan:{}", fd_path);
+    println!("scheme path: {}", scheme_path);
 
     println!("connect gate");
-    let sender_fd = connect_gate(&fd_path)?;
+    let sender_fd = connect_gate(&scheme_path)?;
 
     println!("sendfd");
     let res = syscall::sendfd(sender_fd.try_into().expect("invalid argument"), fd, 0, 0)
