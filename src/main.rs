@@ -23,11 +23,8 @@ fn connect_gate(path: &str) -> Result<RawFd> {
     println!("initialize gate_addr");
     let mut gate_addr: libc::sockaddr_un = unsafe { mem::zeroed() };
     println!("set sun_family");
-    let family_value = libc::AF_UNIX;
-    println!("family_value: {}", family_value);
-    let sa_family = family_value as libc::sa_family_t;
-    println!("sa_family: {}", sa_family);
-    gate_addr.sun_family = sa_family;
+    gate_addr.sun_family = libc::AF_UNIX as libc::sa_family_t;
+
     println!("get path bytes");
     let path_bytes = c_path.as_bytes_with_nul();
     println!("path bytes len: {}", path_bytes.len());
@@ -64,9 +61,9 @@ fn connect_gate(path: &str) -> Result<RawFd> {
 }
 
 fn main() -> Result<()> {
-    // let path = "file:/home/user/test.txt";
-    // println!("file open: {}", path);
-    // let fd = syscall::open(path, syscall::O_RDWR).map_err(from_syscall_error)?;
+    let path = "file:/home/user/test.txt";
+    println!("file open: {}", path);
+    let fd = syscall::open(path, syscall::O_RDONLY).map_err(from_syscall_error)?;
 
     let fd_path = "/tmp/uds/test";
     let scheme_path = format!("chan:{}", fd_path);
@@ -76,17 +73,17 @@ fn main() -> Result<()> {
     let sender_fd = connect_gate(&scheme_path)?;
 
     println!("sendfd");
-    // let res = syscall::sendfd(sender_fd.try_into().expect("invalid argument"), fd, 0, 0)
-    //     .map_err(from_syscall_error)?;
+    let res = syscall::sendfd(sender_fd.try_into().expect("invalid argument"), fd, 0, 0)
+        .map_err(from_syscall_error)?;
 
-    let message = "hello";
-    let res = unsafe {
-        write(
-            sender_fd.try_into().expect("invalid argument"),
-            message.as_ptr() as *const std::os::raw::c_void,
-            message.len(),
-        )
-    };
+    // let message = "hello";
+    // let res = unsafe {
+    //     write(
+    //         sender_fd.try_into().expect("invalid argument"),
+    //         message.as_ptr() as *const std::os::raw::c_void,
+    //         message.len(),
+    //     )
+    // };
     println!("res: {}", res);
 
     Ok(())
