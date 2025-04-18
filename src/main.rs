@@ -1,4 +1,4 @@
-use libc::{connect, socket};
+use libc::{connect, socket, write};
 use std::ffi::CString;
 use std::io::{self};
 use std::mem;
