@@ -76,9 +76,17 @@ fn main() -> Result<()> {
     let sender_fd = connect_gate(&scheme_path)?;
 
     println!("sendfd");
-    let res = syscall::sendfd(sender_fd.try_into().expect("invalid argument"), fd, 0, 0)
-        .map_err(from_syscall_error)?;
+    // let res = syscall::sendfd(sender_fd.try_into().expect("invalid argument"), fd, 0, 0)
+    //     .map_err(from_syscall_error)?;
 
+    let message = "hello";
+    let res = unsafe {
+        write(
+            sender_fd.try_into().expect("invalid argument"),
+            message.as_ptr() as *const std::os::raw::c_void,
+            message.len(),
+        )
+    };
     println!("res: {}", res);
 
     Ok(())
