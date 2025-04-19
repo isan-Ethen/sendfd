@@ -87,9 +87,8 @@ fn main() -> Result<()> {
         )
     };
     println!("res: {}", res);
-    core::mem::forget(socket_fd);
 
-    syscall::close(socket_fd).map_err(from_syscall_error)?;
+    syscall::close(socket_fd.try_into().unwrap()).map_err(from_syscall_error)?;
 
     Ok(())
 }
