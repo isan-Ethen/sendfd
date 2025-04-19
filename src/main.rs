@@ -76,7 +76,6 @@ fn main() -> Result<()> {
     println!("sendfd");
     let res =
         syscall::sendfd(socket_fd.try_into().unwrap(), recvfd, 0, 0).map_err(from_syscall_error)?;
-    core::mem::forget(fd);
 
     let message = "hello";
     let res = unsafe {
@@ -87,6 +86,7 @@ fn main() -> Result<()> {
         )
     };
     println!("res: {}", res);
+    core::mem::forget(socket_fd);
 
     syscall::close(socket_fd.try_into().unwrap()).map_err(from_syscall_error)?;
 
