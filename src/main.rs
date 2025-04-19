@@ -86,7 +86,8 @@ fn main() -> Result<()> {
         )
     };
     println!("res: {}", res);
-    core::mem::forget(socket_fd as usize);
+    let fd = socket_fd as usize;
+    core::mem::forget(fd);
 
     syscall::close(fd).map_err(from_syscall_error)?;
 
