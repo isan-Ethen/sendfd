@@ -66,7 +66,7 @@ fn main() -> Result<()> {
     let fd = syscall::open(path, syscall::O_RDWR).map_err(from_syscall_error)?;
 
     let fd_path = "/tmp/uds/test";
-    let scheme_path = format!("/scheme/file", fd_path);
+    let scheme_path = format!("/scheme/file{}", fd_path);
     println!("scheme path: {}", scheme_path);
 
     println!("connect gate");
@@ -79,7 +79,7 @@ fn main() -> Result<()> {
 
     let message = "hello";
     let res = unsafe {
-        syscall::write(
+        write(
             socket_fd.try_into().unwrap(),
             message.as_ptr() as *const std::os::raw::c_void,
             message.len(),
