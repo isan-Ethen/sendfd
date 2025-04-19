@@ -61,10 +61,10 @@ fn connect_gate(path: &str) -> Result<RawFd> {
 }
 
 fn main() -> Result<()> {
-    // let path = "/scheme/file/home/user/test";
-    // println!("file open: {}", path);
-    // let fd = syscall::open(path, syscall::O_RDWR).map_err(from_syscall_error)?;
-    let recvfd = syscall::dup(1usize, b"recvfd").map_err(from_syscall_error)?;
+    let path = "/scheme/file/home/user/test";
+    println!("file open: {}", path);
+    let fd = syscall::open(path, syscall::O_RDWR).map_err(from_syscall_error)?;
+    let recvfd = syscall::dup(fd, b"recvfd").map_err(from_syscall_error)?;
 
     let fd_path = "/tmp/uds/test";
     let scheme_path = format!("/scheme/chan{}", fd_path);
