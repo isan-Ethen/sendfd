@@ -1,5 +1,4 @@
 use libc::{connect, socket, write};
-use redox_rt::proc::FdGuard;
 use std::ffi::CString;
 use std::io::{self};
 use std::mem;
@@ -64,30 +63,30 @@ fn connect_gate(path: &str) -> Result<RawFd> {
 fn main() -> Result<()> {
     let path = "/scheme/file/home/user/test";
     println!("file open: {}", path);
-    let fd = FdGuard::new(syscall::open(path, syscall::O_RDWR).map_err(from_syscall_error)?);
+    let fd = syscall::open(path, syscall::O_RDWR).map_err(from_syscall_error)?;
 
     let fd_path = "/tmp/uds/test";
     let scheme_path = format!("/scheme/file", fd_path);
     println!("scheme path: {}", scheme_path);
 
     println!("connect gate");
-    let socket_fd = FdGuard::new(connect_gate(&scheme_path)?);
+    let socket_fd = connect_gate(&scheme_path)?;
 
     println!("sendfd");
-    let res = syscall::sendfd(*socket_fd, fd, 0, 0).map_err(from_syscall_error)?;
+    let res =
+        syscall::sendfd(socket_fd.try_into().unwrap(), fd, 0, 0).map_err(from_syscall_error)?;
     core::mem::forget(fd);
 
     let message = "hello";
     let res = unsafe {
         syscall::write(
-            *socket_fd,
+            socket_fd.try_into().unwrap(),
             message.as_ptr() as *const std::os::raw::c_void,
             message.len(),
         )
     };
     println!("res: {}", res);
-    let fd = *socket_fd as usize;
-    core::mem::forget(socket_fd);
+    core::mem::forget(socket_fd as usize);
 
     syscall::close(fd)?;
 
