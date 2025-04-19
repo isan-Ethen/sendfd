@@ -62,12 +62,12 @@ fn connect_gate(path: &str) -> Result<RawFd> {
 }
 
 fn main() -> Result<()> {
-    let path = "file:/home/user/test.txt";
+    let path = "/scheme/file/home/user/test";
     println!("file open: {}", path);
     let fd = FdGuard::new(syscall::open(path, syscall::O_RDWR).map_err(from_syscall_error)?);
 
     let fd_path = "/tmp/uds/test";
-    let scheme_path = format!("/scheme/chan", fd_path);
+    let scheme_path = format!("/scheme/file", fd_path);
     println!("scheme path: {}", scheme_path);
 
     println!("connect gate");
