@@ -64,9 +64,10 @@ fn main() -> Result<()> {
     let path = "/scheme/file/home/user/test";
     println!("file open: {}", path);
     let fd = syscall::open(path, syscall::O_RDWR).map_err(from_syscall_error)?;
+    let recvfd = syscall::dup(fd, "recvfd").map_err(from_syscall_error)?;
 
     let fd_path = "/tmp/uds/test";
-    let scheme_path = format!("/scheme/file{}", fd_path);
+    let scheme_path = format!("/scheme/chan{}", fd_path);
     println!("scheme path: {}", scheme_path);
 
     println!("connect gate");
@@ -74,7 +75,7 @@ fn main() -> Result<()> {
 
     println!("sendfd");
     let res =
-        syscall::sendfd(socket_fd.try_into().unwrap(), fd, 0, 0).map_err(from_syscall_error)?;
+        syscall::sendfd(socket_fd.try_into().unwrap(), recvfd, 0, 0).map_err(from_syscall_error)?;
     core::mem::forget(fd);
 
     let message = "hello";
